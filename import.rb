@@ -15,6 +15,10 @@ def reference_url(code)
   "http://www.basketball-reference.com/teams/#{code}"
 end
 
+def raw_data_for_team(team)
+  Nokogiri::HTML(open(reference_url(team[:short_code])))
+end
+
 def metadata_for_team(team)
   dataset_code = team[:code]
   dataset_name = "NBA Team Statistics - #{team[:name]}"
@@ -28,7 +32,7 @@ META
 end
 
 def data_for_team(team)
-  doc = Nokogiri::HTML(open(reference_url(team[:short_code])))
+  doc = raw_data_for_team(team)
   csv = "Year, Wins, Losses, ORtg, DRtg\n"
   records = doc.css("#div_#{team[:short_code]}")
   records.xpath('.//tbody//tr').each_with_index do |row, i|

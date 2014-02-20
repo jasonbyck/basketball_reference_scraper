@@ -18,7 +18,7 @@ NBA_TEAMS = [
   { short_code: 'SAS', code: 'SPURS', name: 'San Antonio Spurs' },
   { short_code: 'MEM', code: 'GRIZZLIES', name: 'Memphis Grizzlies' },
   { short_code: 'HOU', code: 'ROCKETS', name: 'Houston Rockets' },
-  { short_code: 'DAL', code: 'MAVERICS', name: 'Dallas Mavericks' },
+  { short_code: 'DAL', code: 'MAVERICKS', name: 'Dallas Mavericks' },
   { short_code: 'OKC', code: 'THUNDER', name: 'Oklahoma City Thunder' },
   { short_code: 'UTA', code: 'JAZZ', name: 'Utah Jazz' },
   { short_code: 'MIN', code: 'TIMBERWOLVES', name: 'Minnesota Timberwolves' },
