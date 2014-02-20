@@ -11,25 +11,25 @@ def converted_date(date)
   first_year + 1
 end
 
-NBA_TEAMS.each do |team|
+def reference_url(code)
+  "http://www.basketball-reference.com/teams/#{code}"
+end
 
+def metadata_for_team(team)
   dataset_code = team[:code]
   dataset_name = "NBA Team Statistics - #{team[:name]}"
   dataset_description = "Historical Team Statistics of the #{team[:name]}"
-  ref_url = "http://www.basketball-reference.com/teams/#{team[:short_code]}"
-    
   metadata = <<META
   code: #{dataset_code}
   name: #{dataset_name}
   description: #{dataset_description}
-  reference_url: #{ref_url}
+  reference_url: #{reference_url(team[:short_code])}
 META
-  
-  puts metadata
-  puts '---'
-  
-  doc = Nokogiri::HTML(open(ref_url))
-  puts "Year, Wins, Losses, ORtg, DRtg"
+end
+
+def data_for_team(team)
+  doc = Nokogiri::HTML(open(reference_url(team[:short_code])))
+  csv = "Year, Wins, Losses, ORtg, DRtg\n"
   records = doc.css("#div_#{team[:short_code]}")
   records.xpath('.//tbody//tr').each_with_index do |row, i|
     next if i == 0 # Skip first row (active season)
@@ -44,9 +44,31 @@ META
     # Defensive Rating
     lrtg = row.xpath('.//td')[12].content
     # Convert 2012-13 to 2013 - ie. the year the season ended
-    puts "#{converted_date(date)}, #{wins}, #{loss}, #{ortg}, #{lrtg}"
-  
+    csv << "#{converted_date(date)}, #{wins}, #{loss}, #{ortg}, #{lrtg}\n"
   end
+  csv
+end
+
+NBA_TEAMS.each do |team|
+
+  metadata = metadata_for_team(team)
+  puts metadata
+  puts '---'
+  
+  if metadata.empty?
+    puts "Missing metadata for #{team[:name]}!"
+    exit
+  end
+  
+  data = data_for_team(team)
+  
+  if data.empty? or data.lines.count < 2
+    puts "Missing data for #{team[:name]}!"
+    exit
+  end
+  
+  puts data
+  puts ''
   
 end
 
